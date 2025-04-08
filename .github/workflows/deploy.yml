@@ -1,0 +1,24 @@
+name: Docker Build and Push
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  docker:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Login to DockerHub
+        run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+
+      - name: Build image
+        run: docker build -t khurana-final-api .
+
+      - name: Tag & Push image
+        run: |
+          docker tag khurana-final-api ${{ secrets.DOCKER_USERNAME }}/khurana-final-api
+          docker push ${{ secrets.DOCKER_USERNAME }}/khurana-final-api
